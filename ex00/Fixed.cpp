@@ -6,14 +6,14 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 06:50:07 by qdo               #+#    #+#             */
-/*   Updated: 2024/05/31 06:56:19 by qdo              ###   ########.fr       */
+/*   Updated: 2024/05/31 16:26:17 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
 
 Fixed::Fixed() : _nbr(0) {std::cout << "Default constructor called" << std::endl;}
-Fixed::Fixed( Fixed &src )
+Fixed::Fixed( Fixed const &src )
 {
 	std::cout << "Copy constructor called" << std::endl;
 	this->_nbr = src.getRawBits();

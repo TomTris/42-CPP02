@@ -6,7 +6,7 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 08:37:40 by qdo               #+#    #+#             */
-/*   Updated: 2024/05/31 06:50:05 by qdo              ###   ########.fr       */
+/*   Updated: 2024/05/31 16:26:26 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ public:
 	Fixed();
 	
 	//Copy constructor
-	Fixed(Fixed & src);
+	Fixed(Fixed const & src);
 	//Deconstructor
 	~Fixed();
 	
