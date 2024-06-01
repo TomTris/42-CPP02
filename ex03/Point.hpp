@@ -6,7 +6,7 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 19:58:20 by qdo               #+#    #+#             */
-/*   Updated: 2024/06/01 17:12:42 by qdo              ###   ########.fr       */
+/*   Updated: 2024/06/01 18:07:04 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class Point
 private:
 	Fixed _x;
 	Fixed _y;
+	Fixed _b;
 
 public:
 
@@ -30,17 +31,13 @@ public:
 	~Point();
 	Point & operator=(Point const & src);
 
-	Fixed getX(void) const;
-	Fixed getY(void) const;
 	void  setX(Fixed const &x);
 	void  setY(Fixed const &y);
+	void  setb(Fixed const &x);
+	Fixed getX(void) const;
+	Fixed getY(void) const;
+	Fixed getb(void) const;
 	bool operator==(Point const &src) const;
 };
-
-typedef struct s_linie
-{
-	Fixed a;
-	Fixed b;	
-} t_linie;
 
 #endif
