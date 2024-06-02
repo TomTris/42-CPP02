@@ -1,7 +1,7 @@
 NAME = a.out
 CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++98
-SRC = main.cpp Fixed.cpp bsp.cpp Point.cpp
+SRC = main.cpp Fixed.cpp bsp.cpp Point.cpp Line.cpp
 OBJS = $(SRC:.cpp=.o)
 
 all: $(NAME)
