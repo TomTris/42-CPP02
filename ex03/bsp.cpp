@@ -6,7 +6,7 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 20:15:06 by qdo               #+#    #+#             */
-/*   Updated: 2024/06/02 07:19:15 by qdo              ###   ########.fr       */
+/*   Updated: 2024/06/02 17:01:18 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,7 @@ Point ft_on_line(Point a, Point b, Point line_ab, Point const & point)
 }
 
 bool	ft_in_out(Point const &a, Point const &b, Point const &point)
-{
-	std::cout << " aX " << a.getX() << std::ends;
-	std::cout << " aY " << a.getY() << std::endl;
-	std::cout << " bX " << b.getX() << std::ends;
-	std::cout << " bY " << b.getY() << std::endl;
-	std::cout << " pX " << point.getX() << std::ends;
-	std::cout << " pY " << point.getY() << std::endl;
-	
+{	
 	if 	  ((a.getX() - b.getX() > 0) != (a.getX() - point.getX() > 0)
 		|| (a.getY() - b.getY() > 0) != (a.getY() - point.getY() > 0)
 		|| (a.getX() - b.getX() == 0) != (a.getX() - point.getX() == 0)
@@ -145,7 +138,6 @@ bool bsp(Point const& a, Point const& b, Point const& c, Point const& point)
 	//if "point" on the line is out of scope -> wrong.
 	if (ft_in_out(a, b, on_linie1) == false || ft_in_out(b, c, on_line_bc) == false || ft_in_out(a, c, on_line_ac) == false)
 		return (false);
-		std::cout << "12112" << std::endl;
 	if (ft_correct_side(a, b, line_ab, c, point) == false
 	|| ft_correct_side(a, c, line_ac, b, point) == false
 	|| ft_correct_side(b, c, line_bc, a, point) == false)
