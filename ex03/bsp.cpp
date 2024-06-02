@@ -6,7 +6,7 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 20:15:06 by qdo               #+#    #+#             */
-/*   Updated: 2024/06/01 20:37:10 by qdo              ###   ########.fr       */
+/*   Updated: 2024/06/02 07:19:15 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,49 @@ Point ft_make_linie(Point const &a, Point const &b)
 
 	if (a.getX() == b.getX() || a.getY() == b.getY())
 		return (Point(Fixed(0), Fixed(0)));
+
 	ret.setX((a.getY() -  b.getY()) / (a.getX() - b.getX()));
 	ret.setY(a.getY() - (a.getX() * ret.getX()));
 	return (ret);
 }
 
-Point ft_on_line(Point a, Point b, Point linie1, Point const & point)
+
+// return project of point on line_ab
+Point ft_on_line(Point a, Point b, Point line_ab, Point const & point)
 {
-	Point	linie2;
+	Point	perpendicular;
 	Point	ret;
 
-	if (a.getX() == b.getX() || a.getY() == b.getY())
+	if (a.getX() == b.getX())
 	{
-		if (a.getX() == b.getX())
-		{
-			ret.setX(a.getX());
-			ret.setY(point.getY());
-			return (ret);
-		}
+		ret.setX(a.getX());
+		ret.setY(point.getY());
+		return (ret);
+	}
+	if (a.getY() == b.getY())
+	{
 		ret.setX(point.getX());
 		ret.setY(a.getY());
 		return (ret);
 	}
 
-	linie2.setX(Fixed(-1.0f) / linie1.getX());
-	linie2.setY(point.getY() - (point.getX() * linie2.getX()));
+	perpendicular.setX(Fixed(-1.0f) / line_ab.getX());
+	perpendicular.setY(point.getY() - (point.getX() * perpendicular.getX()));
 
-	ret.setX(Fixed((linie1.getY()  - linie2.getY()) / (linie1.getX() - linie2.getX())));
-	ret.setY(Fixed((linie1.getX() * ret.getX()) + linie1.getY()));
+	ret.setX(Fixed((line_ab.getY()  - perpendicular.getY()) / (perpendicular.getX() - line_ab.getX())));
+	ret.setY(Fixed((line_ab.getX() * ret.getX()) + line_ab.getY()));
 	return (ret);
 }
 
 bool	ft_in_out(Point const &a, Point const &b, Point const &point)
 {
+	std::cout << " aX " << a.getX() << std::ends;
+	std::cout << " aY " << a.getY() << std::endl;
+	std::cout << " bX " << b.getX() << std::ends;
+	std::cout << " bY " << b.getY() << std::endl;
+	std::cout << " pX " << point.getX() << std::ends;
+	std::cout << " pY " << point.getY() << std::endl;
+	
 	if 	  ((a.getX() - b.getX() > 0) != (a.getX() - point.getX() > 0)
 		|| (a.getY() - b.getY() > 0) != (a.getY() - point.getY() > 0)
 		|| (a.getX() - b.getX() == 0) != (a.getX() - point.getX() == 0)
@@ -81,7 +91,7 @@ bool ft_correct_side(Point const &a, Point const &b, Point const &linie, Point c
 		Fixed point_dis_c(point.getX() - c.getX());
 		if (point_dis_c < Fixed(0))
 			point_dis_c = (Fixed(-1) * point_dis_c);
-		if (point_dis_c > c_dis)
+		if (point_dis_c > c_dis)	
 			return (false);
 		return (true);
 	}
@@ -115,29 +125,30 @@ bool ft_correct_side(Point const &a, Point const &b, Point const &linie, Point c
 
 bool bsp(Point const& a, Point const& b, Point const& c, Point const& point)
 {
-	// create a linie y=ax + b. a=point.x, b = point.y
-	if (a == b || b == c || a == c)
+	if (a == b || b == c || a == c || a == point || b == point || c == point)
 		return (false);
-	Point linie1 = ft_make_linie(a, b);
-	Point linie2 = ft_make_linie(b, c);
-	Point linie3 = ft_make_linie(a, c);
 
-	if (ft_check_vertex(a, b, linie1, point) == true
-	|| ft_check_vertex(b, c, linie2, point) == true
-	|| ft_check_vertex(a, c, linie3, point) == true)
+	Point line_ab = ft_make_linie(a, b);
+	Point line_bc = ft_make_linie(b, c);
+	Point line_ac = ft_make_linie(a, c);
+
+	if (ft_check_vertex(a, b, line_ab, point) == true
+	|| ft_check_vertex(b, c, line_bc, point) == true
+	|| ft_check_vertex(a, c, line_ac, point) == true)
 		return (false);
+
 	//projection of the "point" on the line
-	Point on_linie1 = ft_on_line(a, b, linie1, point);
-	Point on_linie2 = ft_on_line(b, c, linie2, point);
-	Point on_linie3 = ft_on_line(a, c, linie3, point);
+	Point on_linie1 = ft_on_line(a, b, line_ab, point);
+	Point on_line_bc = ft_on_line(b, c, line_bc, point);
+	Point on_line_ac = ft_on_line(a, c, line_ac, point);
 
 	//if "point" on the line is out of scope -> wrong.
-	if (ft_in_out(a, b, on_linie1) == false || ft_in_out(b, c, on_linie2) == false || ft_in_out(a, c, on_linie3) == false)
+	if (ft_in_out(a, b, on_linie1) == false || ft_in_out(b, c, on_line_bc) == false || ft_in_out(a, c, on_line_ac) == false)
 		return (false);
-
-	if (ft_correct_side(a, b, linie1, c, point) == false
-	|| ft_correct_side(a, c, linie3, b, point) == false
-	|| ft_correct_side(b, c, linie2, a, point) == false)
+		std::cout << "12112" << std::endl;
+	if (ft_correct_side(a, b, line_ab, c, point) == false
+	|| ft_correct_side(a, c, line_ac, b, point) == false
+	|| ft_correct_side(b, c, line_bc, a, point) == false)
 		return (false);
 	return (true);
 }
