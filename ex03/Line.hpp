@@ -1,40 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Point.hpp                                          :+:      :+:    :+:   */
+/*   Line.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/31 19:58:20 by qdo               #+#    #+#             */
-/*   Updated: 2024/06/02 18:29:31 by qdo              ###   ########.fr       */
+/*   Created: 2024/06/02 18:23:46 by qdo               #+#    #+#             */
+/*   Updated: 2024/06/02 18:29:13 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef POINT_HPP
-#define POINT_HPP
+#ifndef LINE_HPP
+#define LINE_HPP
 
 #include "Fixed.hpp"
 
-class Point
+class Line
 {
 private:
-	Fixed _x;
-	Fixed _y;
+	Fixed _a;
+	Fixed _b;
+	Fixed _c;
 
 public:
 
-	Point();
-	Point(Fixed const &x, Fixed const &y);
-	Point(Point const & src);
-	~Point();
-	Point & operator=(Point const & src);
+	Line();
+	Line(Fixed const &a, Fixed const &b, Fixed const &c);
+	Line(Line const & src);
+	~Line();
+	Line & operator=(Line const & src);
 
-	void  setX(Fixed const &x);
-	void  setY(Fixed const &y);
+	void  seta(Fixed const &x);
+	void  setb(Fixed const &y);
+	void  setc(Fixed const &x);
 
-	Fixed getX(void) const;
-	Fixed getY(void) const;
-	bool operator==(Point const &src) const;
+	Fixed geta(void) const;
+	Fixed getb(void) const;
+	Fixed getc(void) const;
+	// bool operator==(Line const &src) const;
 };
 
 #endif

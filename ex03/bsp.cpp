@@ -6,114 +6,86 @@
 /*   By: qdo <qdo@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 20:15:06 by qdo               #+#    #+#             */
-/*   Updated: 2024/06/02 17:01:18 by qdo              ###   ########.fr       */
+/*   Updated: 2024/06/02 19:43:50 by qdo              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Point.hpp"
+#include "Line.hpp"
 
-Point ft_make_linie(Point const &a, Point const &b)
+Line ft_make_linie(Point const &a, Point const &b)
 {
-	Point ret;
-
-	if (a.getX() == b.getX() || a.getY() == b.getY())
-		return (Point(Fixed(0), Fixed(0)));
-
-	ret.setX((a.getY() -  b.getY()) / (a.getX() - b.getX()));
-	ret.setY(a.getY() - (a.getX() * ret.getX()));
-	return (ret);
-}
-
-
-// return project of point on line_ab
-Point ft_on_line(Point a, Point b, Point line_ab, Point const & point)
-{
-	Point	perpendicular;
-	Point	ret;
+	Line ret;
 
 	if (a.getX() == b.getX())
 	{
-		ret.setX(a.getX());
-		ret.setY(point.getY());
+		ret.seta(1);
+		ret.setb(0);
+		ret.setc(Fixed(-1) * a.getX());
 		return (ret);
 	}
 	if (a.getY() == b.getY())
 	{
-		ret.setX(point.getX());
-		ret.setY(a.getY());
+		ret.seta(0);
+		ret.setb(1);
+		ret.setc(Fixed(-1) * a.getY());
 		return (ret);
 	}
-
-	perpendicular.setX(Fixed(-1.0f) / line_ab.getX());
-	perpendicular.setY(point.getY() - (point.getX() * perpendicular.getX()));
-
-	ret.setX(Fixed((line_ab.getY()  - perpendicular.getY()) / (perpendicular.getX() - line_ab.getX())));
-	ret.setY(Fixed((line_ab.getX() * ret.getX()) + line_ab.getY()));
+	ret.seta(1);
+	ret.setb(    (b.getX() - a.getX())  /  (a.getY() - b.getY())     );
+	ret.setc(    (a.getX() + (ret.getb() * a.getY()))    * Fixed(-1)   );
 	return (ret);
 }
 
-bool	ft_in_out(Point const &a, Point const &b, Point const &point)
+bool ft_check_vertex(Line const &linie, Point const &point)
+{
+	Fixed ret = (point.getX() * linie.geta()) + (point.getY() * linie.getb()) + linie.getc();
+	if (ret == Fixed(0))
+		return (true);
+	return (false);
+}
+
+
+bool	ft_in_out(Point const &b, Point const &c, Point const &inter)
 {	
-	if 	  ((a.getX() - b.getX() > 0) != (a.getX() - point.getX() > 0)
-		|| (a.getY() - b.getY() > 0) != (a.getY() - point.getY() > 0)
-		|| (a.getX() - b.getX() == 0) != (a.getX() - point.getX() == 0)
-		|| (a.getY() - b.getY() == 0) != (a.getY() - point.getY() == 0))
+	if 	  ((b.getX() - c.getX() > 0) != (b.getX() - inter.getX() > 0)
+		|| (b.getY() - c.getY() > 0) != (b.getY() - inter.getY() > 0)
+		|| (b.getX() - c.getX() == 0) != (b.getX() - inter.getX() == 0)
+		|| (b.getY() - c.getY() == 0) != (b.getY() - inter.getY() == 0))
 		return (false);
 	return (true);
 }
 
-bool ft_check_vertex(Point const &a, Point const &b, Point const &linie, Point const &point)
+bool	ft_intersection(Point b, Point c, Line ap, Line bc)
 {
-	if ((a.getX() == b.getX() && a.getX() == point.getX())
-	|| (a.getY() == b.getY() && a.getY() == point.getY()))
-		return (true);
-	if (a.getX() == b.getX() || a.getY() == b.getY())
-		return (false);
-	if (point.getY() == (linie.getX() * point.getX()) + linie.getY())
-		return (true);
-	return (false);
-}
+	Point inter;
+	if ((ap.geta() == 0 && bc.geta() == 0)
+	 || (ap.getb() == 0 && bc.getb() == 0)
+	 || (ap.geta() == bc.geta() && ap.getb() == bc.getb()))
+	 	return (false);
 
-bool ft_correct_side(Point const &a, Point const &b, Point const &linie, Point const &c, Point const &point)
-{
-	if (a.getX() == b.getX())
+	if (ap.geta() == 0)
 	{
-		Fixed c_dis(c.getX() - a.getX());
-		if (c_dis < Fixed(0))
-			c_dis = (Fixed(-1) * c_dis);
-		Fixed point_dis_c(point.getX() - c.getX());
-		if (point_dis_c < Fixed(0))
-			point_dis_c = (Fixed(-1) * point_dis_c);
-		if (point_dis_c > c_dis)	
-			return (false);
-		return (true);
+		inter.setY(Fixed(-1) * ap.getc() / ap.getb());
+		inter.setX(Fixed(-1) * ( (bc.getb() * inter.getY()) + bc.getc() )  / bc.geta()  );
 	}
-	if (a.getY() == b.getY())
+	if (bc.geta() == 0)
 	{
-		Fixed c_dis(c.getY() - a.getY());
-		if (c_dis < Fixed(0))
-			c_dis = (Fixed(-1) * c_dis);
-		Fixed point_dis_c(point.getY() - c.getY());
-		if (point_dis_c < Fixed(0))
-			point_dis_c = (Fixed(-1) * point_dis_c);
-		if (point_dis_c > c_dis)
-			return (false);
-		return (true);
+		inter.setY(Fixed(-1) * bc.getc() / bc.getb());
+		inter.setX(Fixed(-1) * ( (ap.getb() * inter.getY()) + ap.getc() )  / ap.geta()  );
 	}
-	
-	Point linie_c(linie.getX(), c.getY() - c.getX() * linie.getX());
-	Point point_on_linie_c(ft_on_line(a, b, linie_c, point));
-	Fixed point_dis_c_x(point.getX() - point_on_linie_c.getX());
-	Fixed point_dis_c_y(point.getY() - point_on_linie_c.getY());
-	Fixed point_dis_c(point_dis_c_x * point_dis_c_x + point_dis_c_y * point_dis_c_y);
-
-	Point c_on_linie_ab(ft_on_line(a, b, linie, c));
-	Fixed c_dis_ab_x(c.getX() - c_on_linie_ab.getX());
-	Fixed c_dis_ab_y(c.getY() - c_on_linie_ab.getY());
-	Fixed c_dis_ab(c_dis_ab_x * c_dis_ab_x + c_dis_ab_y * c_dis_ab_y);
-	if (c_dis_ab > point_dis_c)
-		return (true);
-	return (false);
+	else
+	{
+		inter.setY(    (ap.getc() - bc.getc()) / (bc.getb() - ap.getb())      );
+		inter.setX(     Fixed(-1) * ( ap.getb() * inter.getY() + ap.getc())  );
+	}
+	std::cout << "xb = " << b.getX() << std::endl;
+	std::cout << "yb = " << b.getY() << std::endl;
+	std::cout << "xc = " << c.getX() << std::endl;
+	std::cout << "yc = " << c.getY() << std::endl;
+	std::cout << "xinter = " << inter.getX() << std::endl;
+	std::cout << "xyinter = " << inter.getY() << std::endl;
+	return (ft_in_out(b, c, inter));
 }
 
 bool bsp(Point const& a, Point const& b, Point const& c, Point const& point)
@@ -121,26 +93,24 @@ bool bsp(Point const& a, Point const& b, Point const& c, Point const& point)
 	if (a == b || b == c || a == c || a == point || b == point || c == point)
 		return (false);
 
-	Point line_ab = ft_make_linie(a, b);
-	Point line_bc = ft_make_linie(b, c);
-	Point line_ac = ft_make_linie(a, c);
+	Line line_ab = ft_make_linie(a, b);
+	Line line_bc = ft_make_linie(b, c);
+	Line line_ac = ft_make_linie(a, c);
 
-	if (ft_check_vertex(a, b, line_ab, point) == true
-	|| ft_check_vertex(b, c, line_bc, point) == true
-	|| ft_check_vertex(a, c, line_ac, point) == true)
+	std::cout << "a = " << line_ab.geta() << " b = " << line_ab.getb() << " c = " << line_ab.getc() << std::endl;
+	std::cout << "a = " << line_bc.geta() << " b = " << line_bc.getb() << " c = " << line_bc.getc() << std::endl;
+	std::cout << "a = " << line_ac.geta() << " b = " << line_ac.getb() << " c = " << line_ac.getc() << std::endl;
+	if (ft_check_vertex(line_ab, point)
+	 || ft_check_vertex(line_bc, point)
+	 || ft_check_vertex(line_ac, point))
 		return (false);
+std::cout << 3 << std::endl;
+	Line line_ap = ft_make_linie(a, point);
+	Line line_bp = ft_make_linie(b, point);
+	Line line_cp = ft_make_linie(c, point);
 
-	//projection of the "point" on the line
-	Point on_linie1 = ft_on_line(a, b, line_ab, point);
-	Point on_line_bc = ft_on_line(b, c, line_bc, point);
-	Point on_line_ac = ft_on_line(a, c, line_ac, point);
-
+	if (!ft_intersection(b, c, line_ap, line_bc) || !ft_intersection(a, c, line_bp, line_ac) || !ft_intersection(a, b, line_cp, line_ab) )
+		return (false);
 	//if "point" on the line is out of scope -> wrong.
-	if (ft_in_out(a, b, on_linie1) == false || ft_in_out(b, c, on_line_bc) == false || ft_in_out(a, c, on_line_ac) == false)
-		return (false);
-	if (ft_correct_side(a, b, line_ab, c, point) == false
-	|| ft_correct_side(a, c, line_ac, b, point) == false
-	|| ft_correct_side(b, c, line_bc, a, point) == false)
-		return (false);
 	return (true);
 }
